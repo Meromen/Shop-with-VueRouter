@@ -3,7 +3,6 @@ import App from './App.vue'
 import VueRouter from 'vue-router';
 import { routes } from './routes'
 
-
 Vue.filter('currency', function(value) {
   let formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -15,6 +14,7 @@ Vue.filter('currency', function(value) {
 });
 
 export const eventBus = new Vue();
+export const authService = { isLoggedIn: false };
 
 Vue.use(VueRouter);
 
