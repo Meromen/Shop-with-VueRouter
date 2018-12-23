@@ -1,29 +1,38 @@
 <template>
-  <div class="container">
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <router-link to="/" class="navbar-brand" exact>
-            <strong>E-commerce Inc.</strong>
-          </router-link>
-        </div>
+  <div>
+    <router-view name="discount"></router-view>
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <router-link to="/" tag="li" exact active-class="active">
-              <a>Products</a>
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <router-link to="/" class="navbar-brand" exact>
+              <strong>E-commerce Inc.</strong>
             </router-link>
-            <router-link to="/cart" tag="li" active-class="active">
-              <a>Cart</a>
-            </router-link>
-          </ul>
-          <div class="nav navbar-nav navbar-right">
-            <div class="stats">{{ cart.items.length }} <template v-if="cart.items.length == 1">item</template><template v-else>items</template> in cart, totalling {{ cartTotal | currency }}</div>
+          </div>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <router-link to="/" tag="li" exact active-class="active">
+                <a>Products</a>
+              </router-link>
+              <router-link to="/cart" tag="li" active-class="active">
+                <a>Cart</a>
+              </router-link>
+            </ul>
+            <div class="nav navbar-nav navbar-right">
+              <div class="stats">{{ cart.items.length }} <template v-if="cart.items.length == 1">item</template><template v-else>items</template> in cart, totalling {{ cartTotal | currency }}</div>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
-    <router-view :cart="cart"></router-view>
+      </nav>
+      <transition
+        enter-active-class="animated fadeInRight"
+        leave-active-class="animated fadeOutLeft"
+        mode="out-in">
+        <router-view :cart="cart"></router-view>
+      </transition>
+    </div>
   </div>
 </template>
 

@@ -1,26 +1,18 @@
 <template>
   <div>
-    <h1>{{ product.name }}</h1>
     <p><strong>ID:</strong> {{ product.id }}</p>
-    <p><strong>Price:</strong> {{ product.price | currency }}</p>
+    <p>
+      <strong>Price:</strong> {{ product.price - discount| currency }}
+      <span v-if="discount > 0">(save {{ discount | currency }})</span>
+    </p>
     <p><strong>In stock:</strong> {{ product.inStock }}</p>
     <p>{{ product.description }}</p>
-
-    <div v-if="relatedProducts != null">
-      <h2>Related Products</h2>
-      <ul>
-        <li v-for="related in relatedProducts">
-          <router-link :to="{ name: 'viewProduct', params: { productId: related.id } }">
-            {{ related.name }}
-          </router-link>
-        </li>
-      </ul>
-    </div>
   </div>
 </template>
 
 <script>
   import { products } from './data/products';
+
   export default {
     props: {
       productId: {
@@ -30,42 +22,43 @@
     data() {
       return {
         products: products,
-        product: null
+        product: null,
+        discount: 0
       };
     },
     created() {
+      this.$watch('$route.query.discount', (newValue, oldValue) => {
+        this.discount = this.getDiscount(this.product.price, newValue);
+      });
+
       this.product = this.getProduct(this.productId);
+
+      if (typeof this.$route.query.discount !== 'undefined') {
+        this.discount = this.getDiscount(this.product.price, this.$route.query.discount);
+      }
     },
     watch: {
       productId(newValue, oldValue) {
         this.product = this.getProduct(newValue);
+        this.discount = this.getDiscount(this.product.price, this.$route.query.discount);
       }
     },
     methods: {
       getProduct(productId) {
         let match = null;
-        this.products.forEach(function(product) {
+        this.products.forEach(function (product) {
           if (product.id == productId) {
             match = product;
           }
         });
         return match;
-      }
-    },
-    computed: {
-      relatedProducts() {
-        if (this.product === null) {
-          return [];
+      },
+      getDiscount(originalPrice, percentage) {
+        if (!percentage){
+          return 0;
         }
-        let related = [];
-        let count = 0;
-        this.products.forEach((product) => {
-          if (product.id != this.product.id && count < 5) {
-            related.push(product);
-            count++;
-          }
-        });
-        return related;
+
+        return ((originalPrice * percentage) / 100);
       }
     }
   }
